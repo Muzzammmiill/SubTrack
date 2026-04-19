@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SubTrack — Subscription Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<div id="appScreen">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">S</div>
+      <span>SubTrack</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" onclick="showSection('dashboard',this)">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('subscriptions',this)">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+        All Subscriptions
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('cards',this)">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+        My Cards
+      </a>
+      <a href="#" class="nav-item" onclick="showSection('upcoming',this)">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Upcoming
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-tagline">Track every subscription,<br/>never miss a payment.</div>
+    </div>
+  </aside>
+
+  <!-- MOBILE HEADER -->
+  <header class="mobile-header">
+    <button class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+    <div class="mobile-logo"><div class="logo-mark sm">S</div>SubTrack</div>
+    <button class="mobile-add" onclick="openAddModal()">+</button>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main-content" id="mainContent">
+
+    <div class="topbar">
+      <div>
+        <h1 class="page-title" id="pageTitle">Dashboard</h1>
+        <p class="page-subtitle" id="pageSubtitle">Overview of your subscriptions</p>
+      </div>
+      <div class="topbar-right">
+        <div class="currency-selector">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/></svg>
+          <select id="currencySelect" onchange="changeCurrency(this.value)">
+            <option value="PKR">₨ PKR</option>
+            <option value="USD">$ USD</option>
+            <option value="EUR">€ EUR</option>
+            <option value="GBP">£ GBP</option>
+            <option value="AED">AED</option>
+            <option value="SAR">SAR</option>
+            <option value="INR">₹ INR</option>
+            <option value="CAD">CA$</option>
+            <option value="AUD">A$</option>
+            <option value="JPY">¥ JPY</option>
+          </select>
+        </div>
+        <button class="btn-add-desktop" onclick="openAddModal()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Add Subscription
+        </button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <section id="sectionDashboard">
+      <div id="alertBanner" class="alert-banner hidden">
+        <div class="alert-inner"><div class="alert-dot pulse"></div><span id="alertText"></span></div>
+        <button onclick="this.closest('.alert-banner').classList.add('hidden')">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card reveal">
+          <div class="stat-icon blue"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <div><div class="stat-label">Monthly cost</div><div class="stat-value" id="statMonthly">—</div></div>
+        </div>
+        <div class="stat-card reveal" style="transition-delay:.07s">
+          <div class="stat-icon dark"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+          <div><div class="stat-label">Yearly cost</div><div class="stat-value" id="statYearly">—</div></div>
+        </div>
+        <div class="stat-card reveal" style="transition-delay:.14s">
+          <div class="stat-icon amber"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+          <div><div class="stat-label">Due this month</div><div class="stat-value" id="statDue">—</div></div>
+        </div>
+        <div class="stat-card reveal" style="transition-delay:.21s">
+          <div class="stat-icon green"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></div>
+          <div><div class="stat-label">Linked cards</div><div class="stat-value" id="statCards">—</div></div>
+        </div>
+      </div>
+      <div class="section-header reveal">
+        <h2 class="section-title">Your subscriptions</h2>
+        <div class="filter-row">
+          <button class="filter-btn active" onclick="filterSubs('all',this)">All</button>
+          <button class="filter-btn" onclick="filterSubs('monthly',this)">Monthly</button>
+          <button class="filter-btn" onclick="filterSubs('yearly',this)">Yearly</button>
+          <button class="filter-btn" onclick="filterSubs('due-soon',this)">Due soon</button>
+        </div>
+      </div>
+      <div class="cards-grid" id="cardsGrid">
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">📋</div>
+          <div class="empty-title">No subscriptions yet</div>
+          <div class="empty-sub">Add your first subscription to start tracking</div>
+          <button class="btn-primary mt-4" onclick="openAddModal()">Add subscription</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ALL SUBSCRIPTIONS -->
+    <section id="sectionSubscriptions" class="hidden">
+      <div class="list-view" id="listView"></div>
+    </section>
+
+    <!-- MY CARDS -->
+    <section id="sectionCards" class="hidden">
+      <div class="section-header">
+        <h2 class="section-title">My payment cards</h2>
+        <button class="btn-add-desktop" onclick="openAddCardModal()">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          Add Card
+        </button>
+      </div>
+      <div id="cardsSection"></div>
+    </section>
+
+    <!-- UPCOMING -->
+    <section id="sectionUpcoming" class="hidden">
+      <div class="timeline" id="timelineView"></div>
+    </section>
+
+  </main>
+</div>
+
+<button class="fab" id="fab" onclick="openAddModal()">
+  <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+</button>
+
+<div class="overlay" id="overlay" onclick="closeOverlay(event)"></div>
+<div class="modal-wrap" id="modalWrap">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">Modal</h3>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+<div class="sidebar-backdrop hidden" id="sidebarBackdrop" onclick="toggleSidebar()"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
